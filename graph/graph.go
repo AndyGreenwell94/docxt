@@ -75,7 +75,7 @@ func (n *Node) toListMap(name string, current map[string]interface{}, out *[]map
 }
 
 // FromObject (Node) - разложение объекта на граф
-func (n *Node) FromObject(obj interface{}) {
+func (n *Node) FromObject(obj interface{}, prefix string) {
 	if n.values == nil {
 		n.values = make(map[string]interface{}, 0)
 	}

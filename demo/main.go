@@ -9,6 +9,7 @@ type TestStruct struct {
 	FileName string
 	Data     map[string]string
 	Items    []TestItemStruct
+	Items1   []TestItemStruct
 }
 
 type TestItemStruct struct {
@@ -29,6 +30,10 @@ func main() {
 	test.Items = []TestItemStruct{
 		{"1", "2", "5", "6"},
 		{"3", "4", "7", "8"},
+	}
+	test.Items1 = []TestItemStruct{
+		{"6", "6", "6", "6"},
+		{"6", "6", "6", "6"},
 	}
 	test.Data = map[string]string{
 		"S1": "123",

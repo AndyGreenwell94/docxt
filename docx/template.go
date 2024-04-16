@@ -75,8 +75,8 @@ func renderDocItem(item DocItem, v interface{}) error {
 				row := elem.Rows[rowIndex]
 				if row != nil {
 					// Если массив
-					if obj, ok := haveArrayInRow(row, v); ok {
-						lines := objToLines(obj)
+					if obj, name, ok := haveArrayInRow(row, v); ok {
+						lines := objToLines(obj, name)
 						template := row.Clone()
 						currentRow := row
 						for _, line := range lines {
@@ -230,7 +230,7 @@ func removeTemplateFromDocItem(template *regexp.Regexp, item DocItem) {
 }
 
 // objToLines - раскладываем объект на строки
-func objToLines(v interface{}) []map[string]interface{} {
+func objToLines(v interface{}, prefix string) []map[string]interface{} {
 	node := new(graph.Node)
 	node.FromObject(v)
 	return node.ListMap()
@@ -256,14 +256,13 @@ func renderRow(row *TableRow, v interface{}) error {
 func modeTemplateText(tpl string) string {
 	tpl = strings.Replace(tpl, "{{", "{{{", -1)
 	tpl = strings.Replace(tpl, "}}", "}}}", -1)
-	//tpl = strings.Replace(tpl, ".", "_", -1)
 	return strings.Replace(tpl, ":length", "_length", -1)
 }
 
 // haveArrayInRow - содержится ли массив в строке
-func haveArrayInRow(row *TableRow, v interface{}) (interface{}, bool) {
+func haveArrayInRow(row *TableRow, v interface{}) (interface{}, string, bool) {
 	if row == nil {
-		return nil, false
+		return nil, "", false
 	}
 	for _, cell := range row.Cells {
 		match := rxTemplateItem.FindStringSubmatch(plainTextFromTableCell(cell))
@@ -281,7 +280,6 @@ func haveArrayInRow(row *TableRow, v interface{}) (interface{}, bool) {
 
 		t := reflect.TypeOf(v)
 		val := reflect.ValueOf(v)
-		var lastVal reflect.Value
 		for _, name := range names {
 			t := findType(t, name)
 			val, _ := findValue(val, name)
@@ -289,17 +287,16 @@ func haveArrayInRow(row *TableRow, v interface{}) (interface{}, bool) {
 				break
 			}
 			if t.Kind() == reflect.Array || t.Kind() == reflect.Slice {
-				if lastVal.IsValid() {
-					return lastVal.Interface(), true
+				if val.IsValid() {
+					return val.Interface(), name, true
 				}
-				return v, true
+				return v, "", true
 			}
-			lastVal = val
 		}
 
 	}
 
-	return nil, false
+	return nil, "", false
 }
 
 // Простой текс у ячейки
