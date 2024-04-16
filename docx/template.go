@@ -75,8 +75,8 @@ func renderDocItem(item DocItem, v interface{}) error {
 				row := elem.Rows[rowIndex]
 				if row != nil {
 					// Если массив
-					if obj, name, ok := haveArrayInRow(row, v); ok {
-						lines := objToLines(obj, name)
+					if obj, ok := haveArrayInRow(row, v); ok {
+						lines := objToLines(obj)
 						template := row.Clone()
 						currentRow := row
 						for _, line := range lines {
@@ -230,7 +230,7 @@ func removeTemplateFromDocItem(template *regexp.Regexp, item DocItem) {
 }
 
 // objToLines - раскладываем объект на строки
-func objToLines(v interface{}, prefix string) []map[string]interface{} {
+func objToLines(v interface{}) []map[string]interface{} {
 	node := new(graph.Node)
 	node.FromObject(v)
 	return node.ListMap()
@@ -260,9 +260,9 @@ func modeTemplateText(tpl string) string {
 }
 
 // haveArrayInRow - содержится ли массив в строке
-func haveArrayInRow(row *TableRow, v interface{}) (interface{}, string, bool) {
+func haveArrayInRow(row *TableRow, v interface{}) (map[string]interface{}, bool) {
 	if row == nil {
-		return nil, "", false
+		return nil, false
 	}
 	for _, cell := range row.Cells {
 		match := rxTemplateItem.FindStringSubmatch(plainTextFromTableCell(cell))
@@ -288,15 +288,15 @@ func haveArrayInRow(row *TableRow, v interface{}) (interface{}, string, bool) {
 			}
 			if t.Kind() == reflect.Array || t.Kind() == reflect.Slice {
 				if val.IsValid() {
-					return val.Interface(), name, true
+					return map[string]interface{}{name: val.Interface()}, true
 				}
-				return v, "", true
+				return nil, true
 			}
 		}
 
 	}
 
-	return nil, "", false
+	return nil, false
 }
 
 // Простой текс у ячейки
