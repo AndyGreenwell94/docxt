@@ -9,7 +9,7 @@ Thanks to `github.com/aymerick/raymond` for useful libs.
 ## Installation
 
 ```
-go get -u github.com/legion-zver/go-docx-templates
+go get -u github.com/AndyGreenwell94/docxt
 ```
 
 ## Usage (demo)
