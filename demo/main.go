@@ -7,22 +7,19 @@ import (
 
 type TestStruct struct {
 	FileName string
+	Data     map[string]string
 	Items    []TestItemStruct
 }
 
 type TestItemStruct struct {
-	Column1  string
-	Column2  string
-	SubItems []TestItemStruct2
-}
-
-type TestItemStruct2 struct {
 	Column1 string
+	Column2 string
+	Column3 string
 	Column4 string
 }
 
 func main() {
-	template, err := docxt.OpenTemplate("./example.docx")
+	template, err := docxt.OpenTemplate("./demo/example.docx")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -30,14 +27,19 @@ func main() {
 	test := new(TestStruct)
 	test.FileName = "example.docx"
 	test.Items = []TestItemStruct{
-		{"1", "2", []TestItemStruct2{{"3", "4"}, {"5", "6"}}},
-		{"3", "4", []TestItemStruct2{{"7", "8"}, {"9", "10"}}},
+		{"1", "2", "5", "6"},
+		{"3", "4", "7", "8"},
 	}
+	test.Data = map[string]string{
+		"S1": "123",
+		"S2": "321",
+	}
+
 	if err := template.RenderTemplate(test); err != nil {
 		fmt.Println(err)
 		return
 	}
-	if err := template.Save("result.docx"); err != nil {
+	if err := template.Save("./demo/result.docx"); err != nil {
 		fmt.Println(err)
 		return
 	}
