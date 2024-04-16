@@ -1,8 +1,8 @@
 package docx
 
 import (
-	"docxt/graph"
 	"errors"
+	"github.com/AndyGreenwell94/docxt/graph"
 	"github.com/aymerick/raymond"
 	"reflect"
 	"regexp"

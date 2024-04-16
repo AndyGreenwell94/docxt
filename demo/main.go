@@ -1,8 +1,8 @@
 package main
 
 import (
-	"docxt"
 	"fmt"
+	"github.com/AndyGreenwell94/docxt"
 )
 
 type TestStruct struct {

@@ -1,8 +1,8 @@
 package docxt
 
 import (
-	"docxt/docx"
 	"errors"
+	"github.com/AndyGreenwell94/docxt/docx"
 	"io"
 )
 
