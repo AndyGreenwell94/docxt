@@ -60,7 +60,7 @@ func main() {
         fmt.Println(err)
         return
     }
-    if err := template.Save("result.docx"); err != nil {
+    if err := template.Save("result.zip"); err != nil {
         fmt.Println(err)
         return
     }
