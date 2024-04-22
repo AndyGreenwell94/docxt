@@ -22,19 +22,26 @@ type ParagraphParams struct {
 	Size                  *StringValue   `xml:"sz"`
 	ParagraphRecordParams *RecordParams  `xml:"rPr"`
 	Ind                   *ParagraphInd  `xml:"ind"`
+	Section               *SectionParam  `xml:"sectPr,omitempty"`
 }
 
-//                <w:sectPr w:rsidR="00CD6C33" w:rsidSect="004620AD">
-//                    <w:headerReference w:type="default" r:id="rId9"/>
-//                    <w:footerReference w:type="default" r:id="rId10"/>
-//                    <w:type w:val="continuous"/>
-//                    <w:pgSz w:w="11910" w:h="16840"/>
-//                    <w:pgMar w:top="1418" w:right="539" w:bottom="1701" w:left="522" w:header="425" w:footer="1140"
-//                             w:gutter="0"/>
-//                    <w:cols w:space="720"/>
-//                    <w:docGrid w:linePitch="299"/>
-//                </w:sectPr>
-//            </w:pPr>
+type ColSpaceValue struct {
+	Space string `xml:"space,attr"`
+}
+
+type DocGridValue struct {
+	LinePitch string `xml:"linePitch,attr"`
+}
+
+type SectionParam struct {
+	HeaderReference *ReferenceValue `xml:"headerReference,omitempty"`
+	FooterReference *ReferenceValue `xml:"footerReference,omitempty"`
+	Type            *StringValue    `xml:"type,omitempty"`
+	PageSize        *SizeValue      `xml:"pgSz,omitempty"`
+	PageMargin      *MarginValue    `xml:"pgMar,omitempty"`
+	Columns         *ColSpaceValue  `xml:"cols,omitempty"`
+	DocumentGrid    *DocGridValue   `xml:"docGrid,omitempty"`
+}
 
 // ParagraphInd = <w:ind w:left="2136" w:right="1209" w:hanging="882" w:firstLine="223"/>
 type ParagraphInd struct {
