@@ -7,11 +7,12 @@ import (
 
 // RecordItem - record item
 type RecordItem struct {
-	Params RecordParams `xml:"rPr,omitempty"`
-	Attrs  []xml.Attr
-	Text   string `xml:"t,omitempty"`
-	Tab    bool   `xml:"tab,omitempty"`
-	Break  bool   `xml:"br,omitempty"`
+	PageBreak bool `xml:"lastRenderedPageBreak,omitempty"`
+	Attrs     []xml.Attr
+	Params    RecordParams `xml:"rPr,omitempty"`
+	Text      string       `xml:"t,omitempty"`
+	Tab       bool         `xml:"tab,omitempty"`
+	Break     bool         `xml:"br,omitempty"`
 }
 
 // RecordParams - params record
@@ -131,6 +132,8 @@ func (item *RecordItem) decode(decoder *xml.Decoder) error {
 						item.Break = true
 					} else if element.Name.Local == "tab" {
 						item.Tab = true
+					} else if element.Name.Local == "lastRenderedPageBreak" {
+						item.PageBreak = true
 					}
 				}
 			case xml.EndElement:
@@ -155,6 +158,18 @@ func (item *RecordItem) encode(encoder *xml.Encoder) error {
 		start := xml.StartElement{Name: xml.Name{Local: item.Tag()}, Attr: item.Attrs}
 		if err := encoder.EncodeToken(start); err != nil {
 			return err
+		}
+		if item.PageBreak {
+			startBr := xml.StartElement{Name: xml.Name{Local: "lastRenderedPageBreak"}}
+			if err := encoder.EncodeToken(startBr); err != nil {
+				return err
+			}
+			if err := encoder.EncodeToken(startBr.End()); err != nil {
+				return err
+			}
+			if err := encoder.Flush(); err != nil {
+				return err
+			}
 		}
 		// Параметры записи
 		if err := encoder.EncodeElement(&item.Params, xml.StartElement{Name: xml.Name{Local: "rPr"}}); err != nil {
