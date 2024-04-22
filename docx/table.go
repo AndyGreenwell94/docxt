@@ -107,17 +107,30 @@ func (item *TableItem) Clone() DocItem {
 // TableParams - Params table
 type TableParams struct {
 	Width   *WidthValue   `xml:"tblW,omitempty"`
+	Style   *StringValue  `xml:"tblStyle,omitempty"`
 	Jc      *StringValue  `xml:"jc,omitempty"`
 	Ind     *WidthValue   `xml:"tblInd,omitempty"`
 	Borders *TableBorders `xml:"tblBorders,omitempty"`
 	Shadow  *ShadowValue  `xml:"shd,omitempty"`
 	Layout  *TableLayout  `xml:"tblLayout,omitempty"`
 	DocGrid *IntValue     `xml:"docGrid,omitempty"`
+	Look    *TableLook    `xml:"tblLook,omitempty"`
 }
 
 // TableLayout - layout params
 type TableLayout struct {
 	Type string `xml:"type,attr"`
+}
+
+// TableLook <w:tblLook w:val="01E0" w:firstRow="1" w:lastRow="1" w:firstColumn="1" w:lastColumn="1" w:noHBand="0" w:noVBand="0"/>
+type TableLook struct {
+	Value       string `xml:"val,attr"`
+	FirstRow    string `xml:"firstRow,attr"`
+	LastRow     string `xml:"lastRow,attr"`
+	FirstColumn string `xml:"firstColumn,attr"`
+	LastColumn  string `xml:"lastColumn,attr"`
+	NoHBand     string `xml:"noHBand,attr"`
+	NoVBand     string `xml:"noVBand,attr"`
 }
 
 // TableBorders in table
@@ -172,6 +185,7 @@ func (b *TableBorder) From(b1 *TableBorder) {
 
 // TableRow - row in table
 type TableRow struct {
+	Attr        []xml.Attr
 	OtherParams *TableParamsEx `xml:"tblPrEx,omitempty"`
 	Params      TableRowParams `xml:"trPr"`
 	Cells       []*TableCell   `xml:"tc,omitempty"`
@@ -385,7 +399,7 @@ func (row *TableCell) decode(decoder *xml.Decoder) error {
 func (item *TableItem) encode(encoder *xml.Encoder) error {
 	if encoder != nil {
 		// Начало таблицы
-		start := xml.StartElement{Name: xml.Name{Local: item.Tag()}}
+		start := xml.StartElement{Name: xml.Name{Local: item.Tag()}, Attr: item.Attrs}
 		if err := encoder.EncodeToken(start); err != nil {
 			return err
 		}
@@ -445,7 +459,7 @@ func (cell *TableCell) encode(encoder *xml.Encoder) error {
 func (row *TableRow) encode(encoder *xml.Encoder) error {
 	if encoder != nil {
 		// Начало строки таблицы
-		start := xml.StartElement{Name: xml.Name{Local: "tr"}}
+		start := xml.StartElement{Name: xml.Name{Local: "tr"}, Attr: row.Attr}
 		if err := encoder.EncodeToken(start); err != nil {
 			return err
 		}

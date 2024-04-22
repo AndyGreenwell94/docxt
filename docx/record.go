@@ -16,16 +16,20 @@ type RecordItem struct {
 
 // RecordParams - params record
 type RecordParams struct {
-	Fonts     *RecordFonts `xml:"rFonts,omitempty"`
-	Rtl       *IntValue    `xml:"rtl,omitempty"`
-	Size      *IntValue    `xml:"sz,omitempty"`
-	SizeCs    *IntValue    `xml:"szCs,omitempty"`
-	Lang      *StringValue `xml:"lang,omitempty"`
-	Underline *StringValue `xml:"u,omitempty"`
-	Italic    *EmptyValue  `xml:"i,omitempty"`
-	Bold      *EmptyValue  `xml:"b,omitempty"`
-	BoldCS    *EmptyValue  `xml:"bCs,omitempty"`
-	Color     *StringValue `xml:"color,omitempty"`
+	Fonts     *RecordFonts     `xml:"rFonts,omitempty"`
+	Rtl       *IntValue        `xml:"rtl,omitempty"`
+	Size      *RecordParamSize `xml:"sz,omitempty"`
+	SizeCs    *IntValue        `xml:"szCs,omitempty"`
+	Lang      *StringValue     `xml:"lang,omitempty"`
+	Underline *StringValue     `xml:"u,omitempty"`
+	Italic    *EmptyValue      `xml:"i,omitempty"`
+	Bold      *EmptyValue      `xml:"b,omitempty"`
+	BoldCS    *EmptyValue      `xml:"bCs,omitempty"`
+	Color     *StringValue     `xml:"color,omitempty"`
+}
+
+type RecordParamSize struct {
+	Value string `xml:"val,attr"`
 }
 
 // RecordFonts - fonts in record
@@ -89,7 +93,7 @@ func (item *RecordItem) Clone() DocItem {
 		result.Params.Rtl.Value = item.Params.Rtl.Value
 	}
 	if item.Params.Size != nil {
-		result.Params.Size = new(IntValue)
+		result.Params.Size = new(RecordParamSize)
 		result.Params.Size.Value = item.Params.Size.Value
 	}
 	if item.Params.SizeCs != nil {
@@ -148,7 +152,7 @@ func (item *RecordItem) decode(decoder *xml.Decoder) error {
 func (item *RecordItem) encode(encoder *xml.Encoder) error {
 	if encoder != nil {
 		// Начало записи
-		start := xml.StartElement{Name: xml.Name{Local: item.Tag()}}
+		start := xml.StartElement{Name: xml.Name{Local: item.Tag()}, Attr: item.Attrs}
 		if err := encoder.EncodeToken(start); err != nil {
 			return err
 		}

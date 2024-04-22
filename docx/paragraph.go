@@ -14,14 +14,30 @@ type ParagraphItem struct {
 
 // ParagraphParams - параметры параграфа
 type ParagraphParams struct {
-	Style   *StringValue  `xml:"pStyle,omitempty"`
-	Tabs    *StringValue  `xml:"tabs,omitempty"`
-	Spacing *SpacingValue `xml:"spacing,omitempty"`
-	Jc      *StringValue  `xml:"jc,omitempty"`
-	Bidi    *IntValue     `xml:"bidi,omitempty"`
+	Style                 *StringValue   `xml:"pStyle,omitempty"`
+	Tabs                  *ParagraphTabs `xml:"tabs,omitempty"`
+	Spacing               *SpacingValue  `xml:"spacing,omitempty"`
+	Jc                    *StringValue   `xml:"jc,omitempty"`
+	Bidi                  *IntValue      `xml:"bidi,omitempty"`
+	Size                  *StringValue   `xml:"sz"`
+	ParagraphRecordParams *RecordParams  `xml:"rPr"`
+	Ind                   *ParagraphInd  `xml:"ind"`
+}
+
+// ParagraphInd = <w:ind w:left="2136" w:right="1209" w:hanging="882" w:firstLine="223"/>
+type ParagraphInd struct {
+	Left      string `xml:"left,attr"`
+	Right     string `xml:"right,attr"`
+	Hanging   string `xml:"hanging,attr"`
+	FirstLine string `xml:"firstLine,attr"`
+}
+type ParagraphTab struct {
+	Value    string `xml:"val,attr"`
+	Position string `xml:"pos,attr"`
 }
 
 type ParagraphTabs struct {
+	Tab []*ParagraphTab `xml:"tab"`
 }
 
 func (item *ParagraphItem) SetAttrs(attrs []xml.Attr) {
@@ -65,8 +81,8 @@ func (item *ParagraphItem) Clone() DocItem {
 		result.Params.Bidi.Value = item.Params.Bidi.Value
 	}
 	if item.Params.Tabs != nil {
-		result.Params.Tabs = new(StringValue)
-		result.Params.Tabs.Value = item.Params.Tabs.Value
+		result.Params.Tabs = new(ParagraphTabs)
+		result.Params.Tabs.Tab = item.Params.Tabs.Tab
 	}
 	if item.Params.Jc != nil {
 		result.Params.Jc = new(StringValue)
@@ -82,6 +98,14 @@ func (item *ParagraphItem) Clone() DocItem {
 	if item.Params.Style != nil {
 		result.Params.Style = new(StringValue)
 		result.Params.Style.Value = item.Params.Style.Value
+	}
+	if item.Params.Size != nil {
+		result.Params.Size = new(StringValue)
+		result.Params.Size.Value = item.Params.Size.Value
+	}
+	if item.Params.ParagraphRecordParams != nil {
+		result.Params.ParagraphRecordParams = new(RecordParams)
+		result.Params.ParagraphRecordParams = item.Params.ParagraphRecordParams
 	}
 	return result
 }

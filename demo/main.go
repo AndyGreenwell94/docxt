@@ -44,7 +44,7 @@ func main() {
 	//	fmt.Println(err)
 	//	return
 	//}
-	if err := template.Save("./demo/result.zip"); err != nil {
+	if err := template.Save("./demo/result.docx"); err != nil {
 		fmt.Println(err)
 		return
 	}
